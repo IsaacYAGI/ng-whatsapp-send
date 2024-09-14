@@ -1,0 +1,7 @@
+.monospaced{
+    font-family: monospace;
+}
+
+div > code {
+    background-color: rgba(223, 212, 212, 0.493);
+}

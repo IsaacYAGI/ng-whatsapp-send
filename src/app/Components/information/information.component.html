@@ -1,0 +1,21 @@
+<div class="card" *ngIf="informationOrigin == 'home'">
+    <div class="card-body">
+        <p>Hola, bienvenid@ al sistema de envío masivo de whatsapp.</p> 
+        <p>Mediante esta interfaz podrás enviar un mismo mensaje a multiples contactos. Para ello solo debes adjuntar un archivo .csv con todos los numeros de telefonos deseados. Tener en cuenta que el formato debe ser "codigo pais sin signo de más + numero de telefono" </p>
+        <p>Por ejemplo: 51987654321,51923456781</p>
+        <p>De ser necesario, presionando el botón de guía de formato tendrás acceso a los diferentes formatos de texto que soporta whatsapp (negrita, cursiva, etc) para que puedas darle color a tus mensajes</p>
+        <p>El mensaje se guardará en el navegador para poder seguir trabajando luego. Si presionas el botón limpiar todos los datos son eliminados</p>
+        <p>Si en vez de envío masivo deseas probar como se ve tu mensaje en whatsapp, entonces debes entrar a la opción de <a href="#" [routerLink]="['/message-test']">prueba de envío</a></p>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="informationOrigin == 'test_message'">
+    <div class="card-body">
+        <p>Hola, bienvenid@ al sistema de envío masivo de whatsapp.</p> 
+        <p>Mediante esta interfaz podrás enviar un mismo mensaje a multiples contactos. Para ello debes colocar el número o números en el cuadro de texto más abajo. Tener en cuenta que el formato debe ser "codigo pais sin signo de más + numero de telefono" </p>
+        <p>Por ejemplo: 51987654321,51923456781</p>
+        <p>De ser necesario, presionando el botón de guía de formato tendrás acceso a los diferentes formatos de texto que soporta whatsapp (negrita, cursiva, etc) para que puedas darle color a tus mensajes</p>
+        <p>El mensaje se guardará en el navegador para poder seguir trabajando luego. Si presionas el botón limpiar todos los datos son eliminados</p>
+        <p>Si en vez de envío de mensaje de prueba deseas enviar el mensaje a multiples contactos mediante un archivo csv, entonces debes entrar a la opción de <a href="#" [routerLink]="['/home']">envío masivo</a></p>
+    </div>
+  </div>
