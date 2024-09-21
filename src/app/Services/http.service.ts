@@ -8,11 +8,16 @@ import { environment } from 'src/environments/environment';
 })
 export class HttpService {
 
-  apiUrl = `${environment.wsApiUrl}/send-whatsapp`
+  apiUrl = `${environment.wsApiUrl}`
   constructor(private http: HttpClient) { }
 
+  startSendSession(){
+    const response$ = this.http.post(`${this.apiUrl}/start-send-session`, {})
+    return lastValueFrom(response$)
+  }
+
   sendWhatsapp(phoneNumber: string, message:string){
-    const message$ = this.http.post(this.apiUrl, {
+    const message$ = this.http.post(`${this.apiUrl}/send-whatsapp`, {
       message:message,
       phone: phoneNumber
     })

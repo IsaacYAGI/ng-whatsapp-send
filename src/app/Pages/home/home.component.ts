@@ -62,6 +62,7 @@ export class HomeComponent {
     this.contPhones = phoneNumbers.length;
     const shouldContinue = confirm(`Se va a enviar el mensaje a ${phoneNumbers.length} contactos. ¿Desea continuar?`)
     if (shouldContinue){
+      await this.sendWhatsappService.startSendSession();
       for (const number of phoneNumbers){
         if (number.length > 0){
           console.log("sending whatsapp to:",number)

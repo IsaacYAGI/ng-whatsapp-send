@@ -54,6 +54,7 @@ export class MessageTestComponent {
     const message = this.form.get("message")?.value;
     const phoneNumbers = this.form.get("phoneNumber")?.value.split(",");
     this.contPhones = phoneNumbers.length;
+    await this.sendWhatsappService.startSendSession();
     for (const number of phoneNumbers){
       await this.sendWhatsappService.sendWhatsapp(number,message)
       await this.sendWhatsappService.sleep(300);
