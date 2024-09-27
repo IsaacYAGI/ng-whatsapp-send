@@ -1,6 +1,6 @@
 # NgWhatsappSend
 
-Este es un proyecto en Angular 15 para automatizar los procesos de comunicación vía whatsapp.
+Este es un proyecto en Angular 17 para automatizar los procesos de comunicación vía whatsapp.
 
 Consiste en una parte frontend que tiene un panel donde se introduce el mensaje y permite:
 - Subir un archivo csv con los números de teléfono a enviar

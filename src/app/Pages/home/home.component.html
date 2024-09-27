@@ -15,9 +15,9 @@
             <div class="col">
                     <label for="message" class="form-label">Escribe el mensaje a enviar aquí</label>
                     <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (change)="saveToLocalStorage()"></textarea>
-                    <small 
-                        *ngIf="messageInvalid"
-                        class="form-text text-danger">Ingrese un mensaje a enviar</small>
+                    @if(messageInvalid){
+                      <small class="form-text text-danger">Ingrese un mensaje a enviar</small>
+                    }
             </div>
         </div>
         <div class="row">
@@ -29,27 +29,29 @@
             <div class="col">
                 <label for="formFile" class="form-label">Adjunta tu archivo CSV con números de telefono</label>
                 <input class="form-control" accept=".csv" formControlName="file" type="file" id="formFile" (change)="onFileSelected($event)">
-                <small 
-                        *ngIf="fileInvalid"
-                        class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
+                @if(fileInvalid){
+                  <small class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
+                }
             </div>
         </div>
         <div class="row mb-5">
             <div class="col">
                 <button type="button" class="btn btn-warning" (click)="clearForm()">Limpiar</button>
             </div>
-           
+
             <div class="col">
                 <button type="submit" class="btn btn-success" [disabled]="form.invalid">Enviar</button>
 
             </div>
         </div>
     </form>
-    <div class="row mb-5" *ngIf="loading">
-        <div class="col text-center">
-            {{currentSent}} mensajes enviados de {{contPhones}}
-        </div>
-    </div>
+    @if(loading){
+      <div class="row mb-5" >
+          <div class="col text-center">
+              {{currentSent}} mensajes enviados de {{contPhones}}
+          </div>
+      </div>
+    }
 
     </div>
 </div>
