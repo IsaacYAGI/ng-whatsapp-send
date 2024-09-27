@@ -50,14 +50,18 @@ createLogFile();
 
 app.post('/start-send-session', (req, res) => {
 
-  writeToLog(`Iniciando envío...`)
+  writeToLog(`-----------------------------Iniciando envío-----------------------------`)
   res.send({response:"ok"})
 })
 
-app.post('/send-whatsapp', (req, res) => {
+app.post('/send-whatsapp', async (req, res) => {
   console.log("req:",req.body)
-  whatsappClient.sendMessage(`${req.body.phone}@c.us`, req.body.message)
-  writeToLog(`Sent,${req.body.phone}`)
+  try {
+    writeToLog(`Sent,${req.body.phone},`)
+    await whatsappClient.sendMessage(`${req.body.phone}@c.us`, req.body.message)
+  } catch (error) {
+    writeToLog(`Error,${req.body.phone},${error}`)
+  }
   res.send({response:"ok"})
 })
 
