@@ -20,7 +20,9 @@ Esto se hace mediante una librería llamada [`whatsapp-web.js`](https://github.c
 
 Nota: La primera vez que se inicie el proyecto de backend, se iniciará con el proceso de vinculación de whatsapp por lo que en la consola se desplegará un código QR que se debe escanear desde la opción "Vincular dispositivo" en la aplicación de Whatsapp. Luego, una carpeta con nombre `.wwebjs_auth` será creada y almacenará los datos de la sesión y mensajes. Todos los mensajes que se envíen serán en nombre de dicha cuenta.
 
-Si se requiere cerrar la sesión se puede hacer desde la aplicación de whatsapp y eliminando la carpeta `.wwebjs_auth`
+La próxima vez que se inicie el backend ya no pedirá vincular el dispositivo ni mostará el codigo QR.
+
+Si se requiere cerrar la sesión se puede hacer desde la aplicación de whatsapp y eliminando la carpeta `.wwebjs_auth` lo que activará nuevamente el proceso de autenticación (escaneo de código QR)
 
 Una vez en la consola de backend (donde se mostró el codigo QR) se muestre el texto "Client is ready!" estará todo listo para enviar mensajes.
 
@@ -57,5 +59,20 @@ Ej:
 Al presionar enviar el mensaje se enviará a los números especificados (**NO SE MUESTRA PANTALLA DE CONFIRMACIÓN**). La finalidad de esta opción es para poder testear el formato del mensaje (negritas, cursivas, tildes, etc).
 
 El proyecto soporta el uso de tildes y emojis también.
+
+## Logs
+Cuando inicia el backend se genera un archivo de logs con hora y fecha actual que permite revisar a qué numeros se han enviado mensajes. También si el envío a uno de ellos fuera insatisfactorio se mostrará el mensaje en el log, dando la oportunidad de poder saber a qué números no llego el mensaje.
+
+Un ejemplo de log:
+
+```
+Filename: backend/logs/log-20241018-123744.log
+
+Log creado el: 20241018-123744
+2024/10/18-12:38:56,-----------------------------Iniciando envío-----------------------------
+2024/10/18-12:38:56,Sent,51123456789,
+2024/10/18-12:38:56,Sent,51987654321,
+
+```
 
 Made with ❤ by Isaac Yriarte <<isaacyagi@gmail.com>>
