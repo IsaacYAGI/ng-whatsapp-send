@@ -26,9 +26,9 @@ Si se requiere cerrar la sesión se puede hacer desde la aplicación de whatsapp
 
 Una vez en la consola de backend (donde se mostró el codigo QR) se muestre el texto "Client is ready!" estará todo listo para enviar mensajes.
 
-## Archivo CSV para envío masivo
+## Archivo CSV para envío masivo (solo teléfonos)
 
-En la ruta `/home` se tiene la opción de envío masivo. Se debe escribir un mensaje y adjuntar un archivo csv exportado con excel con números de teléfono separados por saltos de línea (valor por defecto de excel).
+En la ruta `/home` se tiene la opción de envío masivo. Se debe escribir un mensaje y adjuntar un archivo csv exportado con excel con el campo phone y números de teléfono separados por saltos de línea (valor por defecto de excel).
 
 El formato de este archivo y de los números debe ser como el siguiente:
 
@@ -37,11 +37,69 @@ El formato de este archivo y de los números debe ser como el siguiente:
 Ej:
 
 ```
+phone
 51987654321
 51234567891
 ```
 
 Una vez cargado el archivo, se debe presionar el botón enviar y se mostrará un mensaje de confirmación con el número total de contactos a los que se le enviará el mensaje. Al darle continuar el proceso se ejecuta y la unica forma de detenerlo es recargando la página.
+
+## Archivo CSV para envío masivo (plantillas)
+
+El sistema soporta el mapeo de variables presentes en el excel. Podemos definir diferentes columnas y asignar a cada fila sus valores correspondientes para que en tiempo de ejecución se reemplacen dichos valores.
+
+Podemos lograr esto haciendo lo siguiente:
+
+1. Aparte de la columna phone que es obligatoria, definir en un archivo de excel las otras columnas a utilizar. Los nombres de las columnas no deben tener caracteres extraños como tildes, ñ ni algun caracter especial (por ejemplo: `año`, `dirección`, `anio-seccion` no serían válidos)
+2. Llenar por cada fila todos los datos
+3. Guardar el csv como CSV UTF-8 para que todos los caracteres sean exportados correctamente (para evitar problemas con emojis, el caracter ñ o tildes)
+4. Escribimos el mensaje en la app web como lo haríamos normalmente pero usando el formato de interpolación que se describirá en el ejemplo
+5. Se sugiere crear un archivo csv con uno o dos números de prueba a fin de verificar que los parametros estén mapeados de manera correcta.
+6. En caso que el delimitador de campos sea diferente a `;` (por defecto) se puede configurar en el archivo environment.ts:
+
+```
+...
+config:{
+    sleepBetweenMessagesInMs: 3000,
+    maxSizeMessage:65536,
+    templateDelimiter: ";"
+  },
+...
+```
+
+Por ejemplo, digamos que queremos personalizar un mensaje por cada fila con el nombre y apellido de los contactos. Para hacerlo se siguen los pasos
+
+#### Definir en un archivo de excel las otras columnas a utilizar
+
+El excel en la primera fila colocamos las columnas necesarias, en este ejemplo son el número de teléfono (siempre debe ir), el nombre, el apellido y la palabra de bienvenida que variará según la persona. Al exportar el archivo csv tendríamos algo parecido a lo siguiente:
+
+```
+phone;name;lastname;welcomeword
+51987654321;Pepito;Perez;bienvenido
+51123456789;María;Sanchez;bienvenida
+```
+Como vemos el nombre María tiene tilde por lo que al exportar el archivo es siempre necesario hacerlo con formato UTF-8 para que al momento de utilizarlo se visualicen todos los caracteres correctamente.
+
+#### Escribir el mensaje en la app web
+Con las variables definidas ahora tenemos que crear el mensaje en la app web, para referenciar las variables lo hacemos con el formato `{{nombre_variable}}`.
+
+Por ejemplo queremos que el siguiente mensaje se personalice por fila:
+```
+Hola (NOMBRE) (APELLIDO) queremos que te sientas (BIENVENIDO/A) al evento
+```
+Lo escribiríamos en la app de esta manera:
+```
+Hola {{name}} {{lastname}} queremos que te sientas {{welcomeword}} al evento.
+```
+Lo que ocasionará que se envíen dos mensajes rellenados personalizados por cada fila
+```
+Hola Pepito Perez queremos que te sientas bienvenido al evento
+Hola María Sanchez queremos que te sientas bienvenida al evento
+```
+
+Nota: Las variables a utilizar siempre se leeran en minúsculas. Si se definen en el excel `Lastname` o `LASTNAME`, en el campo de mensaje en el app web se deben referenciar todo en minusculas `{{lastname}}`
+
+También si para cierta fila no está presente la variable que se quiere acceder simplemente se completará con un espacio vacío.
 
 ## Envío de prueba
 
@@ -59,6 +117,8 @@ Ej:
 Al presionar enviar el mensaje se enviará a los números especificados (**NO SE MUESTRA PANTALLA DE CONFIRMACIÓN**). La finalidad de esta opción es para poder testear el formato del mensaje (negritas, cursivas, tildes, etc).
 
 El proyecto soporta el uso de tildes y emojis también.
+
+Nota: En esta sección no se hacen mapeos de variables por lo que no se van a reemplazar.
 
 ## Logs
 Cuando inicia el backend se genera un archivo de logs con hora y fecha actual que permite revisar a qué numeros se han enviado mensajes. También si el envío a uno de ellos fuera insatisfactorio se mostrará el mensaje en el log, dando la oportunidad de poder saber a qué números no llego el mensaje.
