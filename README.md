@@ -55,6 +55,17 @@ Podemos lograr esto haciendo lo siguiente:
 3. Guardar el csv como CSV UTF-8 para que todos los caracteres sean exportados correctamente (para evitar problemas con emojis, el caracter ñ o tildes)
 4. Escribimos el mensaje en la app web como lo haríamos normalmente pero usando el formato de interpolación que se describirá en el ejemplo
 5. Se sugiere crear un archivo csv con uno o dos números de prueba a fin de verificar que los parametros estén mapeados de manera correcta.
+6. En caso que el delimitador de campos sea diferente a `;` (por defecto) se puede configurar en el archivo environment.ts:
+
+```
+...
+config:{
+    sleepBetweenMessagesInMs: 3000,
+    maxSizeMessage:65536,
+    templateDelimiter: ";"
+  },
+...
+```
 
 Por ejemplo, digamos que queremos personalizar un mensaje por cada fila con el nombre y apellido de los contactos. Para hacerlo se siguen los pasos
 
