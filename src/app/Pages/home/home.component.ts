@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/Services/http.service';
 import { LocalstorageService } from 'src/app/Services/localstorage.service';
+import { UtilsService } from 'src/app/Services/utils.service';
 import { environment } from 'src/environments/environment';
+const Mustache = require('mustache');
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,8 @@ export class HomeComponent {
 
   constructor( private formBuilder: FormBuilder,
       private localStorage: LocalstorageService,
-      private sendWhatsappService: HttpService
+      private sendWhatsappService: HttpService,
+      private utilsService: UtilsService
     ){
       this.contPhones = 0;
     this.currentSent = 0;
@@ -56,19 +59,18 @@ export class HomeComponent {
 
   async processCsv(csv: string){
     console.log("processCsv:",csv)
+    const csvObj = this.utilsService.CSVToJSON(csv)
     this.loading = true;
     const message = this.form.get("message")?.value;
-    const phoneNumbers = csv.split("\n");
-    this.contPhones = phoneNumbers.length;
-    const shouldContinue = confirm(`Se va a enviar el mensaje a ${phoneNumbers.length} contactos. ¿Desea continuar?`)
+    this.contPhones = csvObj.length;
+    const shouldContinue = confirm(`Se va a enviar el mensaje a ${csvObj.length} contactos. ¿Desea continuar?`)
     if (shouldContinue){
       await this.sendWhatsappService.startSendSession();
-      for (const number of phoneNumbers){
-        if (number.length > 0){
-          console.log("sending whatsapp to:",number)
-          await this.sendWhatsappService.sendWhatsapp(number.trim(),message)
-          await this.sendWhatsappService.sleep(environment.config.sleepBetweenMessagesInMs);
-        }
+      for (const row of csvObj){
+        console.log("sending whatsapp to:",row)
+        const compiledMessage = Mustache.render(message,  row)
+        await this.sendWhatsappService.sendWhatsapp(row.phone.trim(),compiledMessage)
+        await this.sendWhatsappService.sleep(environment.config.sleepBetweenMessagesInMs);
         this.currentSent++;
       }
     }
