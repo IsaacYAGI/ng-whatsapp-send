@@ -21,7 +21,6 @@ export class UtilsService {
       const data = dataLines[i].split(environment.config.templateDelimiter)
       for (let j = 0; j < fieldNames.length; j++){
         const fieldName = this.removeLineBreaks(fieldNames[j].toLowerCase().trim());
-        console.log(data[j])
         obj[fieldName] = this.removeLineBreaks(data[j])
       }
       objList.push(obj)
