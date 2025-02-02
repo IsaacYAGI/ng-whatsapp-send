@@ -6,6 +6,7 @@ const date = require('date-and-time');
 const app = express()
 const port = 3000
 const { whatsappClient } = require('./whatsapp-client.js')
+const { MessageMedia } = require('whatsapp-web.js');
 
 let logFileName = "";
 let logFilePath = "";
@@ -59,6 +60,19 @@ app.post('/send-whatsapp', async (req, res) => {
   try {
     writeToLog(`Sent,${req.body.phone},`)
     await whatsappClient.sendMessage(`${req.body.phone}@c.us`, req.body.message)
+  } catch (error) {
+    writeToLog(`Error,${req.body.phone},${error}`)
+  }
+  res.send({response:"ok"})
+})
+
+app.post('/send-whatsapp-image', async (req, res) => {
+  console.log("req:",req.body)
+  try {
+    writeToLog(`Sent_Image,${req.body.phone},`)
+    const media = MessageMedia.fromFilePath(req.body.filePath);
+    const {caption} = req.body
+    await whatsappClient.sendMessage(`${req.body.phone}@c.us`, media, {caption})
   } catch (error) {
     writeToLog(`Error,${req.body.phone},${error}`)
   }
