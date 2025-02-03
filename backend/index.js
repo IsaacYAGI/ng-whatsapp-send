@@ -10,8 +10,8 @@ const { MessageMedia } = require('whatsapp-web.js');
 
 let logFileName = "";
 let logFilePath = "";
-app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use(cors())
 
 function getTimestamp() {
@@ -69,7 +69,7 @@ app.post('/send-whatsapp', async (req, res) => {
 app.post('/send-whatsapp-file', async (req, res) => {
   console.log("req:",req.body)
   try {
-    writeToLog(`Sent_Image,${req.body.phone},`)
+    writeToLog(`Sent_File,${req.body.phone},`)
     const media = MessageMedia.fromFilePath(req.body.filePath);
     const {caption} = req.body
     await whatsappClient.sendMessage(`${req.body.phone}@c.us`, media, {caption})
@@ -82,8 +82,8 @@ app.post('/send-whatsapp-file', async (req, res) => {
 app.post('/send-whatsapp-file-b64', async (req, res) => {
   console.log("req:",req.body)
   try {
-    writeToLog(`Sent_Image,${req.body.phone},`)
-    const media = new MessageMedia(req.body.mime, req.body.file);
+    writeToLog(`Sent_File,${req.body.phone},`)
+    const media = new MessageMedia(req.body.mime, req.body.file, req.body.filename);
     const {caption} = req.body
     await whatsappClient.sendMessage(`${req.body.phone}@c.us`, media, {caption})
   } catch (error) {
