@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 export interface MasiveSendFormResponse{
   message: string;
   phoneNumber?: string;
+  attachment?: File | null;
   file?: File;
 }
 
@@ -21,6 +22,8 @@ export class MasiveSendFormComponent implements OnInit{
   form!: FormGroup;
   maxSizeMessage: number = environment.config.maxSizeMessage;
   file!: File;
+  fileAttachment!: File | null;
+  showAttachmentInput = false;
 
   @Input() isTestMessage = false;
   @Output() onFormSubmit: EventEmitter<MasiveSendFormResponse> = new EventEmitter()
@@ -30,13 +33,16 @@ export class MasiveSendFormComponent implements OnInit{
     private localStorage: LocalstorageService,
   ){
     this.createForm();
-    const currentMessage = localStorage.getFromLocalStorage("message");
-    this.form.reset({
-      message:currentMessage
-    })
   }
 
   ngOnInit(): void {
+    const currentMessage = this.localStorage.getFromLocalStorage("message");
+    const attachFile = (this.localStorage.getFromLocalStorage("attachFile") === "true")
+    this.form.reset({
+      message:currentMessage,
+      attachFile: attachFile
+    })
+
     if (this.isTestMessage){
       this.form.get("file")?.clearValidators()
       this.form.get("phoneNumber")?.setValidators(phoneNumberValidators)
@@ -44,13 +50,41 @@ export class MasiveSendFormComponent implements OnInit{
       this.form.get("file")?.setValidators(fileValidators)
       this.form.get("phoneNumber")?.clearValidators()
     }
+    this.showAttachmentInput = attachFile
+    if (this.showAttachmentInput){
+      this.form.get("attachment")?.setValidators(fileValidators)
+    }else{
+      this.form.get("attachment")?.clearValidators()
+    }
+
     this.form.get("file")?.updateValueAndValidity()
+    this.form.get("attachment")?.updateValueAndValidity()
     this.form.get("phoneNumber")?.updateValueAndValidity()
+  }
+
+  onCheckboxChange(event: any){
+    const value = event.target.checked
+
+    if (value){
+      this.showAttachmentInput = true;
+      this.form.get("attachment")?.setValidators(fileValidators)
+      this.localStorage.saveToLocalStorage("attachFile", value)
+
+    }else{
+      this.form.get("attachment")?.clearValidators()
+      this.form.get("attachment")?.setValue("")
+      this.fileAttachment = null;
+      this.showAttachmentInput = false;
+      this.localStorage.saveToLocalStorage("attachFile", value || false)
+    }
+    this.form.get("attachment")?.updateValueAndValidity()
   }
 
   createForm(){
       this.form = this.formBuilder.group({
         message: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(this.maxSizeMessage)]],
+        attachFile: [false,],
+        attachment: ['',fileValidators],
         file: ['', fileValidators],
         phoneNumber: ['', phoneNumberValidators],
       })
@@ -61,7 +95,8 @@ export class MasiveSendFormComponent implements OnInit{
     this.onFormSubmit.emit({
       message,
       phoneNumber,
-      file: this.file
+      file: this.file,
+      attachment: this.fileAttachment
     })
   }
 
@@ -81,8 +116,16 @@ export class MasiveSendFormComponent implements OnInit{
     return this.form.get("phoneNumber")?.invalid && this.form.get("phoneNumber")?.touched
   }
 
+  get fileAttachmentInvalid(){
+    return this.form.get("attachment")?.invalid && this.form.get("attachment")?.touched
+  }
+
   saveToLocalStorage(){
     this.localStorage.saveToLocalStorage("message",this.form.get("message")?.value || "")
+  }
+
+  onAttachmentSelected(event: any){
+    this.fileAttachment = event.target.files[0];
   }
 
   onFileSelected(event: any){
@@ -91,6 +134,10 @@ export class MasiveSendFormComponent implements OnInit{
 
   clearForm(){
     this.form.reset();
+    this.showAttachmentInput = false;
+    this.form.get("attachment")?.clearValidators()
+    this.form.get("attachment")?.updateValueAndValidity()
+    this.localStorage.saveToLocalStorage("attachFile", "false")
     this.localStorage.saveToLocalStorage("message","")
   }
 }

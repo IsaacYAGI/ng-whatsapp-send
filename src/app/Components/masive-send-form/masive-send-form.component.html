@@ -13,6 +13,21 @@
       {{messageLength}} de {{maxSizeMessage}} caracteres usados
   </div>
 </div>
+
+<div class="row mb-3">
+  <div class="col">
+      <input type="checkbox" name="attachFile" id="attachFile" formControlName="attachFile" (click)="onCheckboxChange($event)">
+      <label for="attachFile" class="form-label ms-2 my-3">El mensaje lleva adjunto</label> <br>
+      @if(showAttachmentInput){
+        <label for="attachment" class="form-label">Adjunta archivo a enviar con el mensaje</label>
+        <input class="form-control" accept=".csv" formControlName="attachment" type="file" id="attachment" (change)="onAttachmentSelected($event)">
+        @if(fileAttachmentInvalid){
+          <small class="form-text text-danger">Adjunte un archivo</small>
+        }
+      }
+  </div>
+</div>
+
 @if (!isTestMessage) {
   <div class="row mb-3">
     <div class="col">
