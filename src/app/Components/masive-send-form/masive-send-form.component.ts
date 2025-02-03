@@ -4,10 +4,10 @@ import { LocalstorageService } from 'src/app/Services/localstorage.service';
 import { environment } from 'src/environments/environment';
 
 export interface MasiveSendFormResponse{
-  message: string;
   includeMessage: boolean;
   includeAttachment: boolean;
   phoneNumber?: string;
+  message?: string;
   attachment?: File | null;
   caption?: string | null;
   file?: File;

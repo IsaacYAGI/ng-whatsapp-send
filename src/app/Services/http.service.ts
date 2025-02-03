@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Base64File } from './utils.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,17 @@ export class HttpService {
     const message$ = this.http.post(`${this.apiUrl}/send-whatsapp`, {
       message:message,
       phone: phoneNumber
+    })
+    return lastValueFrom(message$)
+  }
+
+  sendWhatsappDocument(phoneNumber: string, file: Base64File, caption: string|null = null){
+
+    const message$ = this.http.post(`${this.apiUrl}/send-whatsapp-file-b64`, {
+      file:file.file,
+      mime: file.mime,
+      phone: phoneNumber,
+      ...{caption}
     })
     return lastValueFrom(message$)
   }

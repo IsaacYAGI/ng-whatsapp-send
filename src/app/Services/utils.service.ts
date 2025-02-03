@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
+export interface Base64File{
+  mime: string;
+  file: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,4 +36,19 @@ export class UtilsService {
   removeLineBreaks(text: string): string{
     return text?.replace(/\r?\n|\r/,"") || ""
   }
+
+  fileToBase64(file: File): Promise<Base64File> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const base64String = (reader.result as string).split(',')[1];
+            resolve({
+                mime: file.type,
+                file: base64String
+            });
+        };
+        reader.onerror = error => reject(error);
+    });
+}
 }
