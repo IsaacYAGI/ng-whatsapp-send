@@ -2,7 +2,7 @@
 <div class="row mb-3">
   <div class="col">
           <label for="message" class="form-label">Escribe el mensaje a enviar aquí</label>
-          <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (change)="saveToLocalStorage()"></textarea>
+          <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (input)="saveToLocalStorage()"></textarea>
           @if(messageInvalid){
             <small class="form-text text-danger">Ingrese un mensaje a enviar</small>
           }
