@@ -10,6 +10,7 @@ import { HomeComponent } from './Pages/home/home.component';
 import { MessageTestComponent } from './Pages/message-test/message-test.component';
 import { WhatsappFormatGuideComponent } from './Components/whatsapp-format-guide/whatsapp-format-guide.component';
 import { InformationComponent } from './Components/information/information.component';
+import { MasiveSendFormComponent } from './Components/masive-send-form/masive-send-form.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { InformationComponent } from './Components/information/information.compo
     HomeComponent,
     MessageTestComponent,
     WhatsappFormatGuideComponent,
-    InformationComponent
+    InformationComponent,
+    MasiveSendFormComponent
   ],
   imports: [
     BrowserModule,

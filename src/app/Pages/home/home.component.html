@@ -5,46 +5,14 @@
                 <app-information [informationOrigin]="'home'"></app-information>
             </div>
         </div>
-        <form [formGroup]="form" (ngSubmit)="sendMessage()">
-            <div class="row mb-3 mt-3">
-                <div class="col">
-                    <app-whatsapp-format-guide></app-whatsapp-format-guide>
-                </div>
-            </div>
-        <div class="row mb-3">
+        <div class="row mb-3 mt-3">
             <div class="col">
-                    <label for="message" class="form-label">Escribe el mensaje a enviar aquí</label>
-                    <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (change)="saveToLocalStorage()"></textarea>
-                    @if(messageInvalid){
-                      <small class="form-text text-danger">Ingrese un mensaje a enviar</small>
-                    }
+                <app-whatsapp-format-guide></app-whatsapp-format-guide>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                {{messageLength}} de {{maxSizeMessage}} caracteres usados
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col">
-                <label for="formFile" class="form-label">Adjunta tu archivo CSV con números de telefono</label>
-                <input class="form-control" accept=".csv" formControlName="file" type="file" id="formFile" (change)="onFileSelected($event)">
-                @if(fileInvalid){
-                  <small class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
-                }
-            </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col">
-                <button type="button" class="btn btn-warning" (click)="clearForm()">Limpiar</button>
-            </div>
-
-            <div class="col">
-                <button type="submit" class="btn btn-success" [disabled]="form.invalid">Enviar</button>
-
-            </div>
-        </div>
-    </form>
+        <app-masive-send-form
+          (onFormSubmit)="sendMessage($event)"
+        />
     @if(loading){
       <div class="row mb-5" >
           <div class="col text-center">
