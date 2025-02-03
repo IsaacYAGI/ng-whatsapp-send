@@ -80,7 +80,6 @@ app.post('/send-whatsapp-file', async (req, res) => {
 })
 
 app.post('/send-whatsapp-file-b64', async (req, res) => {
-  console.log("req:",req.body)
   try {
     writeToLog(`Sent_File,${req.body.phone},`)
     const media = new MessageMedia(req.body.mime, req.body.file, req.body.filename);
