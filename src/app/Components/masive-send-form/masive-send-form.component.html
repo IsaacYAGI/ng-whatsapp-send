@@ -26,7 +26,7 @@
       <label for="attachFile" class="form-label ms-2 my-3">El mensaje lleva adjunto</label> <br>
       @if(showAttachmentInput){
         <label for="attachment" class="form-label">Adjunta archivo a enviar con el mensaje</label>
-        <input class="form-control" accept=".csv" formControlName="attachment" type="file" id="attachment" (change)="onAttachmentSelected($event)">
+        <input class="form-control" formControlName="attachment" type="file" id="attachment" (change)="onAttachmentSelected($event)">
         @if(fileAttachmentInvalid){
           <small class="form-text text-danger">Adjunte un archivo</small>
         }
