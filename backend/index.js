@@ -66,7 +66,7 @@ app.post('/send-whatsapp', async (req, res) => {
   res.send({response:"ok"})
 })
 
-app.post('/send-whatsapp-image', async (req, res) => {
+app.post('/send-whatsapp-file', async (req, res) => {
   console.log("req:",req.body)
   try {
     writeToLog(`Sent_Image,${req.body.phone},`)
