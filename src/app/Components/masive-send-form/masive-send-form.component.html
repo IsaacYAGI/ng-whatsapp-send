@@ -1,5 +1,11 @@
 <form [formGroup]="form" (ngSubmit)="sendMessage()">
-<div class="row mb-3">
+  <div class="row mb-3">
+    <div class="col">
+        <input type="checkbox" name="includeMessage" id="includeMessage" formControlName="includeMessage" (click)="onMessageCheckboxChange($event)">
+        <label for="includeMessage" class="form-label ms-2 my-3">Incluir mensaje</label> <br>
+    </div>
+  </div>
+  <div class="row mb-3">
   <div class="col">
           <label for="message" class="form-label">Escribe el mensaje a enviar aquí</label>
           <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (input)="saveToLocalStorage()"></textarea>
