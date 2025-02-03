@@ -29,6 +29,7 @@ export class HttpService {
 
     const message$ = this.http.post(`${this.apiUrl}/send-whatsapp-file-b64`, {
       file:file.file,
+      filename: file.name,
       mime: file.mime,
       phone: phoneNumber,
       ...{caption}

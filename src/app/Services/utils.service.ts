@@ -3,7 +3,8 @@ import { environment } from 'src/environments/environment';
 
 export interface Base64File{
   mime: string;
-  file: string
+  file: string;
+  name: string;
 }
 
 @Injectable({
@@ -45,7 +46,8 @@ export class UtilsService {
             const base64String = (reader.result as string).split(',')[1];
             resolve({
                 mime: file.type,
-                file: base64String
+                file: base64String,
+                name: file.name,
             });
         };
         reader.onerror = error => reject(error);
