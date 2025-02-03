@@ -9,6 +9,7 @@ export interface MasiveSendFormResponse{
   includeAttachment: boolean;
   phoneNumber?: string;
   attachment?: File | null;
+  caption?: string | null;
   file?: File;
 }
 
@@ -39,10 +40,12 @@ export class MasiveSendFormComponent implements OnInit{
 
   ngOnInit(): void {
     const currentMessage = this.localStorage.getFromLocalStorage("message");
+    const currentCaption = this.localStorage.getFromLocalStorage("caption");
     const attachFile = (this.localStorage.getFromLocalStorage("attachFile") === "true")
     const includeMessage = ((this.localStorage.getFromLocalStorage("includeMessage") ?? "true") === "true")
     this.form.reset({
       message:currentMessage,
+      attachmentCaption: currentCaption,
       attachFile: attachFile,
       includeMessage
     })
@@ -121,20 +124,22 @@ export class MasiveSendFormComponent implements OnInit{
         includeMessage: [true,],
         attachFile: [false,],
         attachment: ['',fileValidators],
+        attachmentCaption: ['',[]],
         file: ['', fileValidators],
         phoneNumber: ['', phoneNumberValidators],
       })
     }
 
   sendMessage(){
-    const {message, phoneNumber, attachFile, includeMessage} = this.form.value;
+    const {message, phoneNumber, attachFile, includeMessage, attachmentCaption} = this.form.value;
     this.onFormSubmit.emit({
       message,
       phoneNumber,
       includeAttachment: attachFile,
       includeMessage: includeMessage,
       file: this.file,
-      attachment: this.fileAttachment
+      attachment: this.fileAttachment,
+      caption: attachmentCaption
     })
   }
 
@@ -162,6 +167,10 @@ export class MasiveSendFormComponent implements OnInit{
     this.localStorage.saveToLocalStorage("message",this.form.get("message")?.value || "")
   }
 
+  saveCaptionToLocalStorage(){
+    this.localStorage.saveToLocalStorage("caption",this.form.get("attachmentCaption")?.value || "")
+  }
+
   onAttachmentSelected(event: any){
     this.fileAttachment = event.target.files[0];
   }
@@ -181,5 +190,6 @@ export class MasiveSendFormComponent implements OnInit{
     this.form.get("attachment")?.updateValueAndValidity()
     this.localStorage.saveToLocalStorage("attachFile", "false")
     this.localStorage.saveToLocalStorage("message","")
+    this.localStorage.saveToLocalStorage("caption","")
   }
 }
