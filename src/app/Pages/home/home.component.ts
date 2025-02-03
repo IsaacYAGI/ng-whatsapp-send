@@ -59,7 +59,7 @@ export class HomeComponent {
       // console.log(e)
       this.processCsv(fileReader.result as string)
     }
-    fileReader.readAsText(event.file);
+    fileReader.readAsText(event.file ?? new File([],""));
   }
 
 

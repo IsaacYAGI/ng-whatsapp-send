@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
+import { MasiveSendFormResponse } from 'src/app/Components/masive-send-form/masive-send-form.component';
 import { HttpService } from 'src/app/Services/http.service';
-import { LocalstorageService } from 'src/app/Services/localstorage.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -14,62 +14,31 @@ export class MessageTestComponent {
   contPhones: number;
   currentSent: number;
   loading: boolean;
-  maxSizeMessage: number = environment.config.maxSizeMessage;
 
-  constructor( private formBuilder: FormBuilder, private localStorage: LocalstorageService, private sendWhatsappService: HttpService){
+
+  constructor(
+    private sendWhatsappService: HttpService
+  ){
     this.contPhones = 0;
     this.currentSent = 0;
     this.loading = false;
-    this.createForm();
-    const currentMessage = localStorage.getFromLocalStorage("message");
-    this.form.reset({
-      message:currentMessage
-    })
   }
 
-  get messageInvalid(){
-    return this.form.get("message")?.invalid && this.form.get("message")?.touched
-  }
-
-  get phoneNumberInvalid(){
-    return this.form.get("phoneNumber")?.invalid && this.form.get("phoneNumber")?.touched
-  }
-
-  get messageLength(){
-    return this.form.get("message")?.value?.length || 0;
-  }
-
-  createForm(){
-    this.form = this.formBuilder.group({
-      message: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(this.maxSizeMessage)]],
-      phoneNumber: ['', [Validators.required, Validators.minLength(9)]],
-    })
-  }
-
-
-  async sendMessage(){
+  async sendMessage(event: MasiveSendFormResponse){
     console.log("Sending messages...")
-    console.log(this.form.value)
+    console.log(event)
     this.loading = true;
-    const message = this.form.get("message")?.value;
-    const phoneNumbers = this.form.get("phoneNumber")?.value.split(",");
+    const message = event.message;
+    const phoneNumbers = event.phoneNumber?.split(",") || [];
     this.contPhones = phoneNumbers.length;
     await this.sendWhatsappService.startSendSession();
     for (const number of phoneNumbers){
       await this.sendWhatsappService.sendWhatsapp(number,message)
-      await this.sendWhatsappService.sleep(300);
+      await this.sendWhatsappService.sleep(environment.config.sleepBetweenMessagesInMs);
       this.currentSent++;
     }
     this.loading = false;
     this.currentSent = 0;
   }
 
-  clearForm(){
-    this.form.reset();
-    this.localStorage.saveToLocalStorage("message","")
-  }
-
-  saveToLocalStorage(){
-    this.localStorage.saveToLocalStorage("message",this.form.get("message")?.value || "")
-  }
 }

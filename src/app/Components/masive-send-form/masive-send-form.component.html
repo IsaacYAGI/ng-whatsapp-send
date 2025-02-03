@@ -13,15 +13,28 @@
       {{messageLength}} de {{maxSizeMessage}} caracteres usados
   </div>
 </div>
-<div class="row mb-3">
-  <div class="col">
-      <label for="formFile" class="form-label">Adjunta tu archivo CSV con números de telefono</label>
-      <input class="form-control" accept=".csv" formControlName="file" type="file" id="formFile" (change)="onFileSelected($event)">
-      @if(fileInvalid){
-        <small class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
-      }
+@if (!isTestMessage) {
+  <div class="row mb-3">
+    <div class="col">
+        <label for="formFile" class="form-label">Adjunta tu archivo CSV con números de telefono</label>
+        <input class="form-control" accept=".csv" formControlName="file" type="file" id="formFile" (change)="onFileSelected($event)">
+        @if(fileInvalid){
+          <small class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
+        }
+    </div>
   </div>
-</div>
+}
+@if (isTestMessage) {
+  <div class="row mb-3">
+    <div class="col">
+        <label for="phoneNumber" class="form-label">Ingresa números separados por coma para enviar mensaje de prueba </label>
+        <input class="form-control" formControlName="phoneNumber" type="text" id="phoneNumber">
+        @if (phoneNumberInvalid) {
+          <small class="form-text text-danger">Ingrese número valido</small>
+        }
+    </div>
+  </div>
+}
 <div class="row mb-5">
   <div class="col">
       <button type="button" class="btn btn-warning" (click)="clearForm()">Limpiar</button>

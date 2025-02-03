@@ -1,23 +1,28 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocalstorageService } from 'src/app/Services/localstorage.service';
 import { environment } from 'src/environments/environment';
 
 export interface MasiveSendFormResponse{
   message: string;
-  file: File;
+  phoneNumber?: string;
+  file?: File;
 }
+
+const phoneNumberValidators = [Validators.required, Validators.minLength(9)];
+const fileValidators = [Validators.required];
 
 @Component({
   selector: 'app-masive-send-form',
   templateUrl: './masive-send-form.component.html',
   styleUrl: './masive-send-form.component.css'
 })
-export class MasiveSendFormComponent {
+export class MasiveSendFormComponent implements OnInit{
   form!: FormGroup;
   maxSizeMessage: number = environment.config.maxSizeMessage;
   file!: File;
 
+  @Input() isTestMessage = false;
   @Output() onFormSubmit: EventEmitter<MasiveSendFormResponse> = new EventEmitter()
 
   constructor(
@@ -31,17 +36,31 @@ export class MasiveSendFormComponent {
     })
   }
 
+  ngOnInit(): void {
+    if (this.isTestMessage){
+      this.form.get("file")?.clearValidators()
+      this.form.get("phoneNumber")?.setValidators(phoneNumberValidators)
+    }else{
+      this.form.get("file")?.setValidators(fileValidators)
+      this.form.get("phoneNumber")?.clearValidators()
+    }
+    this.form.get("file")?.updateValueAndValidity()
+    this.form.get("phoneNumber")?.updateValueAndValidity()
+  }
+
   createForm(){
       this.form = this.formBuilder.group({
         message: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(this.maxSizeMessage)]],
-        file: ['', [Validators.required]],
+        file: ['', fileValidators],
+        phoneNumber: ['', phoneNumberValidators],
       })
     }
 
   sendMessage(){
-    const {message} = this.form.value;
+    const {message, phoneNumber} = this.form.value;
     this.onFormSubmit.emit({
       message,
+      phoneNumber,
       file: this.file
     })
   }
@@ -56,6 +75,10 @@ export class MasiveSendFormComponent {
 
   get messageLength(){
     return this.form.get("message")?.value?.length || 0;
+  }
+
+  get phoneNumberInvalid(){
+    return this.form.get("phoneNumber")?.invalid && this.form.get("phoneNumber")?.touched
   }
 
   saveToLocalStorage(){
