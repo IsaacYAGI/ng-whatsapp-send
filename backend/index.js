@@ -79,6 +79,19 @@ app.post('/send-whatsapp-file', async (req, res) => {
   res.send({response:"ok"})
 })
 
+app.post('/send-whatsapp-file-b64', async (req, res) => {
+  console.log("req:",req.body)
+  try {
+    writeToLog(`Sent_Image,${req.body.phone},`)
+    const media = new MessageMedia(req.body.mime, req.body.file);
+    const {caption} = req.body
+    await whatsappClient.sendMessage(`${req.body.phone}@c.us`, media, {caption})
+  } catch (error) {
+    writeToLog(`Error,${req.body.phone},${error}`)
+  }
+  res.send({response:"ok"})
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
