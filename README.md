@@ -43,6 +43,10 @@ phone
 51987654321
 51234567891
 ```
+Ejemplo de archivo:
+
+![image](https://github.com/user-attachments/assets/311ec7c6-350a-47b9-8a66-c3a68085e2e6)
+
 
 Una vez cargado el archivo, se debe presionar el botón enviar y se mostrará un mensaje de confirmación con el número total de contactos a los que se le enviará el mensaje. Al darle continuar el proceso se ejecuta y la unica forma de detenerlo es recargando la página.
 
@@ -73,7 +77,12 @@ Por ejemplo, digamos que queremos personalizar un mensaje por cada fila con el n
 
 #### Definir en un archivo de excel las otras columnas a utilizar
 
-El excel en la primera fila colocamos las columnas necesarias, en este ejemplo son el número de teléfono (siempre debe ir), el nombre, el apellido y la palabra de bienvenida que variará según la persona. Al exportar el archivo csv tendríamos algo parecido a lo siguiente:
+El excel en la primera fila colocamos las columnas necesarias, en este ejemplo son el número de teléfono (siempre debe ir), el nombre, el apellido y la palabra de bienvenida que variará según la persona:
+
+![image](https://github.com/user-attachments/assets/fe0f8df3-74ed-4866-b7aa-94a43141caa0)
+
+
+Al exportar el archivo csv tendríamos algo parecido a lo siguiente:
 
 ```
 phone;name;lastname;welcomeword
