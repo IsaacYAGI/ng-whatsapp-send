@@ -1,0 +1,73 @@
+<form [formGroup]="form" (ngSubmit)="sendMessage()">
+  <div class="row mb-3">
+    <div class="col">
+        <input type="checkbox" name="includeMessage" id="includeMessage" formControlName="includeMessage" (click)="onMessageCheckboxChange($event)">
+        <label for="includeMessage" class="form-label ms-2 my-3">Incluir mensaje</label> <br>
+    </div>
+  </div>
+  <div class="row mb-3">
+  <div class="col">
+          <label for="message" class="form-label">Escribe el mensaje a enviar aquí</label>
+          <textarea name="message" formControlName="message" id="message" cols="30" rows="10" class="form-control" (input)="saveToLocalStorage()"></textarea>
+          @if(messageInvalid){
+            <small class="form-text text-danger">Ingrese un mensaje a enviar</small>
+          }
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+      {{messageLength}} de {{maxSizeMessage}} caracteres usados
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col">
+      <input type="checkbox" name="attachFile" id="attachFile" formControlName="attachFile" (click)="onCheckboxChange($event)">
+      <label for="attachFile" class="form-label ms-2 my-3">El mensaje lleva adjunto</label> <br>
+      @if(showAttachmentInput){
+        <label for="attachment" class="form-label">Adjunta archivo a enviar con el mensaje</label>
+        <input class="form-control" formControlName="attachment" type="file" id="attachment" (change)="onAttachmentSelected($event)">
+        @if(fileAttachmentInvalid){
+          <small class="form-text text-danger">Adjunte un archivo</small>
+        }
+        <div class="col my-2">
+          <label for="attachmentCaption" class="form-label">Escribe un título para el adjunto (opcional)</label>
+          <textarea name="attachmentCaption" formControlName="attachmentCaption" id="attachmentCaption" cols="30" rows="3" class="form-control" (input)="saveCaptionToLocalStorage()"></textarea>
+        </div>
+      }
+  </div>
+</div>
+
+@if (!isTestMessage) {
+  <div class="row mb-3">
+    <div class="col">
+        <label for="formFile" class="form-label">Adjunta tu archivo CSV con números de telefono</label>
+        <input class="form-control" accept=".csv" formControlName="file" type="file" id="formFile" (change)="onFileSelected($event)">
+        @if(fileInvalid){
+          <small class="form-text text-danger">Adjunte un archivo csv de números de telefono</small>
+        }
+    </div>
+  </div>
+}
+@if (isTestMessage) {
+  <div class="row mb-3">
+    <div class="col">
+        <label for="phoneNumber" class="form-label">Ingresa números separados por coma para enviar mensaje de prueba </label>
+        <input class="form-control" formControlName="phoneNumber" type="text" id="phoneNumber">
+        @if (phoneNumberInvalid) {
+          <small class="form-text text-danger">Ingrese número valido</small>
+        }
+    </div>
+  </div>
+}
+<div class="row mb-5">
+  <div class="col">
+      <button type="button" class="btn btn-warning" (click)="clearForm()">Limpiar</button>
+  </div>
+
+  <div class="col">
+      <button type="submit" class="btn btn-success" [disabled]="form.invalid">Enviar</button>
+
+  </div>
+</div>
+</form>
