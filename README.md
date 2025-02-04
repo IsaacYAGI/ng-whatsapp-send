@@ -134,6 +134,9 @@ Nota: En esta sección no se hacen mapeos de variables por lo que no se van a re
 ## Envío de archivos
 El app soporta adjuntar un archivo para que pueda ser compartido o bien con el mensaje o solo enviar el archivo a la lista de números especificados. Para ello solo es necesario marcar el checkbox "El mensaje lleva adjunto" lo que habilitará dos campos:
 
+![image](https://github.com/user-attachments/assets/c9526129-3fd9-4a25-83bf-fb0fba573d5b)
+
+
 1) Selector de archivo: para adjuntar el archivo a enviar. El archivo puede ser de cualquier extensión puesto que no está limitado en el html pero hay algunas limitaciones:
 - El archivo debe ser menor a 10 MB
 - Si bien permite elegir cualquier extensión no se ha podido probar con todos por lo que no se garantiza que los soporte a todos. Hasta el momento se probó con: Documentos de excel, word, pdf, imagenes, zip, exe, archivos de audio. Archivos de videos parece tener limitaciones.
