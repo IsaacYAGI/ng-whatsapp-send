@@ -59,7 +59,8 @@ app.post('/send-whatsapp', async (req, res) => {
   console.log("req:",req.body)
   try {
     writeToLog(`Sent,${req.body.phone},`)
-    await whatsappClient.sendMessage(`${req.body.phone}@c.us`, req.body.message)
+    const message = await whatsappClient.sendMessage(`${req.body.phone}@c.us`, req.body.message)
+    // console.log("Message sent:",message._data.id)
   } catch (error) {
     writeToLog(`Error,${req.body.phone},${error}`)
   }

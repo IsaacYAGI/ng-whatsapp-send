@@ -25,13 +25,18 @@ whatsappClient.on('ready', () => {
     console.log('Client is ready!');
 });
 
+whatsappClient.on('message_ack', async (message, ack) => {
+  const text = await message.getInfo();
+    console.log('Message received: ' ,text, ack, message.id);
+});
+
 // whatsappClient.on('message', message => {
 // 	if(message.body === '!ping') {
 //         console.log("ChatId:",message.from)
 // 		message.reply('pong');
 // 	}
 // });
- 
+
 
 whatsappClient.initialize();
 
