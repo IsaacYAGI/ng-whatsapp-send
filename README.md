@@ -108,9 +108,13 @@ Hola Pepito Perez queremos que te sientas bienvenido al evento
 Hola María Sanchez queremos que te sientas bienvenida al evento
 ```
 
-Nota: Las variables a utilizar siempre se leeran en minúsculas. Si se definen en el excel `Lastname` o `LASTNAME`, en el campo de mensaje en el app web se deben referenciar todo en minusculas `{{lastname}}`
+Notas: 
 
-También si para cierta fila no está presente la variable que se quiere acceder simplemente se completará con un espacio vacío.
+- Las variables a utilizar siempre se leeran en minúsculas. Si se definen en el excel `Lastname` o `LASTNAME`, en el campo de mensaje en el app web se deben referenciar todo en minusculas `{{lastname}}`
+
+- También si para cierta fila no está presente la variable que se quiere acceder simplemente se completará con un espacio vacío.
+
+- Para el caso de links y otras variables con cadenas de caracteres que puedan contener caracteres especiales (como por ejemplo `/`) la librería por defecto los va a escapar. En estos casos, para que la libería no realice la conversión será necesario utilizar triple llaves en tu variable: `{{{url}}}`
 
 ## Envío de prueba
 
