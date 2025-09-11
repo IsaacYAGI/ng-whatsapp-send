@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+result_install_front.txt
+backend/result_install_back.txt
