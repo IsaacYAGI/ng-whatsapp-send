@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  front:
+    image: node:20.10.0-alpine
+    # If UID/GID are not exported, fall back to 1000:1000 (change if needed)
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "4200:4200"
+    command: sh -c "npm start -- --host 0.0.0.0 --poll 500"
+
+  back:
+    build:
+      context: ./backend
+    image: ng-whatsapp-send-back:latest
+    # If UID/GID are not exported, fall back to 1000:1000 (change if needed)
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    privileged: true
+    environment:
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome-stable
+      CHROME_BIN: /usr/bin/google-chrome-stable
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+    command: ["sh", "-c", "rm -f /app/.wwebjs_auth/session/SingletonLock || true; trap \"rm -f /app/.wwebjs_auth/session/SingletonLock || true\" EXIT; npm start"]
