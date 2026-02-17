@@ -31,6 +31,104 @@ Si se requiere cerrar la sesión se puede hacer desde la aplicación de whatsapp
 
 Una vez en la consola de backend (donde se mostró el codigo QR) se muestre el texto "Client is ready!" estará todo listo para enviar mensajes.
 
+# Docker: Instalación y ejecución
+
+Si quisieras correr el proyecto usando docker a continuación se describen los pasos para instalar dependencias y ejecutar los componentes usando contenedores Docker. Separado por componente: frontend y backend.
+
+## Frontend
+
+- Instalar dependencias (usa la imagen oficial de Node para crear `node_modules` en tu máquina):
+
+```bash
+sudo docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:20.10.0-alpine npm install
+```
+
+- Ejecutar el servidor de desarrollo (mapea el puerto 4200):
+
+```bash
+sudo docker run --rm -it --user "$(id -u):$(id -g)" -p 4200:4200 -v "$PWD":/app -w /app node:20.10.0-alpine npm start -- --host 0.0.0.0 --poll 500
+```
+
+> Nota: Se recomienda usar `--user "$(id -u):$(id -g)"` para que los archivos generados dentro del volumen sean propiedad del usuario host.
+
+## Backend
+
+1. Construir la imagen personalizada (contiene Google Chrome):
+
+```bash
+sudo docker build -t ng-whatsapp-send-back:latest ./backend
+```
+
+2. Instalar dependencias del backend montando tu código en el contenedor (esto crea `node_modules` en tu host):
+
+```bash
+sudo docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD":/app -w /app ng-whatsapp-send-back:latest npm install
+```
+
+3. Ejecutar el backend (ejemplo con variables necesarias para Puppeteer y Chrome). Si tu entorno requiere sandbox, puedes añadir `--privileged` o capacidades como se muestra más abajo:
+
+```bash
+sudo docker run --rm -it --user "$(id -u):$(id -g)" -p 3000:3000 \
+  --privileged \
+  -v "$PWD":/app -w /app \
+  -e PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable \
+  -e CHROME_BIN=/usr/bin/google-chrome-stable \
+  -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+  ng-whatsapp-send-back:latest \
+  npm start
+```
+
+Alternativa menos invasiva que `--privileged` (añade capacidades y relaja seccomp):
+
+```bash
+sudo docker run --rm -it --user "$(id -u):$(id -g)" -p 3000:3000 \
+  --cap-add=SYS_ADMIN --security-opt seccomp=unconfined \
+  -v "$PWD":/app -w /app \
+  -e PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable \
+  -e CHROME_BIN=/usr/bin/google-chrome-stable \
+  -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+  ng-whatsapp-send-back:latest \
+  npm start
+```
+
+### Notas y recomendaciones
+- Si ejecutas el contenedor como tu UID (`--user`), puede ser necesario usar `--privileged` o `--cap-add=SYS_ADMIN --security-opt seccomp=unconfined` para que Chrome pueda usar el sandbox. Como alternativa en desarrollo, podrías lanzar Chrome con `--no-sandbox`, pero NO es recomendable en producción.
+- Si prefieres que Puppeteer use el Chrome ya instalado en la imagen, las variables `PUPPETEER_EXECUTABLE_PATH` y `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` evitan que Puppeteer descargue su propio Chromium y fuerza el uso del binario del sistema.
+- Si tienes problemas de permisos al crear `node_modules`, instala dependencias con el contenedor ejecutado con `--user "$(id -u):$(id -g)"` (como se muestra arriba) para que los archivos creados pertenezcan al usuario host.
+
+## Docker Compose
+
+Para levantar todo el ambiente (frontend + backend) con un solo comando usamos Docker Compose.
+
+- Levantar por primera vez (recomendado sin `-d` para ver logs y escanear el código QR que mostrará el backend):
+
+```bash
+sudo docker compose up --build
+```
+
+Nota: no uses `-d` la primera vez porque necesitas ver los logs en la consola; el backend mostrará un código QR que debes escanear para vincular la cuenta. Esto tambien aplica si es que has desvinculado el dispositivo de la sesion de whatsapp, recuerda tambien borrar las carpetas `backend/.wwebjs_auth` y `backend/.wwebjs_cache` antes de volver a levantar el proyecto.
+
+- Ejecuciones subsecuentes: puedes usar `-d` (desacople) si no necesitas ver los logs en pantalla, y `--build` es opcional a menos que hayas modificado el `Dockerfile` o el contexto de la imagen. Si modificas la imagen Docker, asegúrate de usar `--build` para que los cambios se reflejen:
+
+```bash
+# con desacople
+sudo docker compose up -d
+
+# forzar rebuild y levantar
+sudo docker compose up --build
+```
+
+- Bajar todos los servicios:
+
+```bash
+sudo docker compose down
+```
+
+Recordatorio: si has modificado `backend/Dockerfile` (p. ej. instalaste Chrome, cambiastes permisos, etc.), ejecuta `sudo docker compose up --build` para reconstruir la imagen antes de iniciar los servicios.
+
+**Nota sobre docker-compose.yml**: Se mapea el usuario de la maquina en el contenedor para evitar en lo posible crear y correr como root el contenedor. Se debe exportar las variables de entorno UID y GID para que al momento de levantar el contenedor se mapee la variable. De no hacer esto se tomara el valor por default que es 1000. Si desea se puede cambiar en la imagen por el requerido pero tener en cuenta que debe volver a construirse la imagen
+
+
 ## Archivo CSV para envío masivo (solo teléfonos)
 
 En la ruta `/home` se tiene la opción de envío masivo. Se debe escribir un mensaje, se tiene la opción de adjuntar un archivo, colocarle un texto "caption" al archivo, y adjuntar un archivo csv exportado con excel con el campo phone y números de teléfono separados por saltos de línea (valor por defecto de excel).
